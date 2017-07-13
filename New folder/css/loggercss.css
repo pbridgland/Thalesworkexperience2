@@ -1,0 +1,18 @@
+html, body {
+  background: #000000;
+  
+}
+
+#logger {
+  min-width: 300px;
+  height: 100%;
+  padding: 10px;
+  background: #000000
+}
+
+.log {}
+
+.INFO { color: #FFFFFF !important }
+.WARN { color: #FFA500 !important }
+.EMERGENCY { color: #FF0000 !important }
+.TIME { color: #0000FF !important }

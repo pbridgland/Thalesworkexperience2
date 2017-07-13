@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Draw Features</title>
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.2.0/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.2.0/build/ol.js"></script> 
+	<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="css/sidebarcss.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
+	<script src= "https://hammerjs.github.io/dist/hammer.js"></script> 
+	<script src= "js/sidebarjs.js"></script> 
+  </head>
+  <body>
+    <div id="map" class="map">
+	<div id="popup"></div>
+	</div>
+	<div id="myElement"></div> 
+	<div id= "sb" class="hidden-panel">
+		<div class="hidden-panel-content">
+			<nav class="hidden-panel-nav">
+			  <h3>Unit Details</h3>
+			  <ul>
+				<li><a href="#" title="Title1">Name</a></li>
+				<div id="Name"></div>
+				<li><a href="#" title="About">Rank</a></li>
+				<div id="Rank"></div> 
+				<li><a href="#" title="About">Status</a></li>
+				<div id="Status"></div>
+				<li><a href="#" title="About">Age</a></li>
+				<div id="Age"></div>
+				<li><a href="#" title="About">HeartRate</a></li> 
+				<div id="HeartRate"></div>
+			  </ul>
+			</nav>
+		   </div>
+		</div>
+	</div>
+	
+    <script> 
+	
+	 var object1 = new ol.Feature({
+        geometry: new ol.geom.Point([-500, 6801000]),
+        name: 'Squad Leader', 
+		rank: 'General',
+		age:  '36',
+		heartrate: '80',
+		status:	'Healthy'
+      });  
+	  var object2 = new ol.Feature({
+        geometry: new ol.geom.Point([-2400,6803600]),
+        name: 'Squad Member 1',
+		rank: 'Private',
+		age:  '22',
+		heartrate: '40',
+		status:	'Healthy'
+      });
+	   var object3 = new ol.Feature({
+        geometry: new ol.geom.Point([-1550, 6802000]),
+        name: 'Squad Member 2', 
+		rank: 'Private',
+		age:  '30',
+		heartrate: '180',
+		status:	'Under Fire'
+      });  
+	  var object4 = new ol.Feature({
+        geometry: new ol.geom.Point([-500,6800000]),
+        name: 'Squad Member 3', 
+		rank: 'Corporal',
+		age:  '27',
+		heartrate: '20',
+		status:	'Critical'
+      });
+	  var object5 = new ol.Feature({
+        geometry: new ol.geom.Point([-2500,6800000]),
+        name: 'Drone 1', 
+		rank: 'N/A',
+		age:  'N/A',
+		heartrate: 'N/A',
+		status:	'Online'
+      });
+	  
+      var squadmember = new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [15, 40],
+          anchorXUnits: ' pixels',
+          anchorYUnits: ' pixels',
+          src: 'https://image.ibb.co/b238nv/SquadMem.png'
+		  }))
+      }); 
+	  var squadleader = new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [15, 40],
+          anchorXUnits: ' pixels',
+          anchorYUnits: ' pixels',
+          src: 'https://image.ibb.co/cmFSfF/SquadLea.png'
+		  }))
+      });
+	  var drone = new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [15, 40],
+          anchorXUnits: ' pixels',
+          anchorYUnits: ' pixels',
+          src: 'https://image.ibb.co/jpouAF/Drone2.png'
+		  }))
+      });
+	  
+      object1.setStyle(squadleader);
+	  object2.setStyle(squadmember); 
+	  object3.setStyle(squadmember);
+	  object4.setStyle(squadmember);
+	  object5.setStyle(drone);
+	   
+        window.app = {};
+        var app = window.app;
+
+        app.ClearFeaturesControl = function(opt_options) {
+
+        var options = opt_options || {};
+		
+		
+        var button = document.createElement('button');
+        button.innerHTML = "C";
+
+        var this_ = this;
+        var handleClearFeatures;
+
+        
+
+        var element = document.createElement('div');
+        element.className = 'clear-features ol-unselectable ol-control';
+        element.appendChild(button);
+
+        ol.control.Control.call(this, {
+          element: element,
+          target: options.target
+        });
+
+      };
+      ol.inherits(app.ClearFeaturesControl, ol.control.Control);
+	  
+      var vectorSource = new ol.source.Vector({
+        features: [object1,object2,object3,object4,object5]
+      });
+
+      var vectorLayer = new ol.layer.Vector({source: vectorSource});
+	
+	  var raster = new ol.layer.Tile({
+        source: new ol.source.OSM()
+      });
+
+      var source = new ol.source.Vector({wrapX: false});
+
+      var vector = new ol.layer.Vector({
+        source: source
+      });
+
+      var map = new ol.Map({
+
+       controls: ol.control.defaults({
+          attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+            collapsible: false
+          })
+        }).extend([
+          new app.ClearFeaturesControl()
+        ]),
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM()
+          })
+        ],
+        layers: [raster, vector, vectorLayer],
+        target: 'map',
+        view: new ol.View({
+          center: object1.getGeometry().getCoordinates(),
+          zoom: 13
+        })
+      });
+	
+		var element = document.getElementById('popup');
+	    var shown = false;
+		
+		
+	
+	 var popup = new ol.Overlay({
+        element: element,
+        positioning: 'bottom-center',
+        stopEvent: false,
+        offset: [0, -40]
+      });
+      map.addOverlay(popup);
+      var typeSelect = document.getElementById('type');
+
+      var draw; // global so we can remove it later
+      function addInteraction() {
+        var value = typeSelect.value;
+        if (value !== 'None') {
+          draw = new ol.interaction.Draw({
+            source: source,
+           type: /** @type {ol.geom.GeometryType} */ (typeSelect.value) 
+			
+          });
+         map.addInteraction(draw);
+        }		 
+      } 
+	  var modes=["None","Point","LineString","Polygon","Circle"]
+	  function addInteraction2() {
+          draw = new ol.interaction.Draw({
+            source: source,
+            type: /** @type {ol.geom.GeometryType} */ (mode)});
+			map.addInteraction(draw);
+        }		 
+      
+	  
+	  
+	 var feature;
+	 map.on('click', function(evt) { 
+			if(shown){ 
+					document.body.classList.remove('panel-open');
+					menuToggle.classList.remove('open');
+					$(element).popover('destroy'); 
+					shown= false;
+			}else{ 
+				feature = map.forEachFeatureAtPixel(evt.pixel,
+						function(feature) {
+						return feature;
+						});
+				if (feature) {
+				var coordinates = feature.getGeometry().getCoordinates();
+				popup.setPosition(coordinates);
+				$(element).popover({
+					'placement': 'top',
+					'html': true,
+					'content': feature.get('name')
+				});
+				} else { 
+					document.body.classList.remove('panel-open');
+					menuToggle.classList.remove('open');
+					$(element).popover('destroy');   
+					shown= false;
+				} 
+					var Name = feature.get('name');document.getElementById("Name").innerHTML=Name; 
+					var Rank = feature.get('rank');document.getElementById("Rank").innerHTML=Rank;
+					var Status = feature.get('status');document.getElementById("Status").innerHTML=Status;
+					var Age = feature.get('age');document.getElementById("Age").innerHTML=Age;
+					var HeartRate = feature.get('heartrate');document.getElementById("HeartRate").innerHTML=HeartRate;
+					document.body.classList.toggle('panel-open');
+					menuToggle.classList.toggle('open'); 
+					shown= true;
+			}
+	  });
+	  
+	  
+	var myElement = document.getElementById('map');
+	var mc = new Hammer(myElement);
+	mc.get("swipe").set({pointers: 2}); 
+	mc.on("panleft panright tap press swipe", function(ev) {
+    console.log(ev.type +" gesture detected.");
+	});
+	
+	
+	  var i = 0;
+	  mc.on('swipeleft', function(){
+		i+=1;  
+		if (i>4){i=0;}; 
+		console.log(i.toString())
+		mode=modes[i];
+	    map.removeInteraction(draw); 
+		if(i>0){
+        addInteraction2();
+	  }});
+	  
+	  mc.on('swiperight', function(){
+		i=0; 
+		console.log(i.toString())
+		mode=modes[i];
+	    map.removeInteraction(draw); 
+		if(i>0){
+        addInteraction2(); 
+	  }});
+	  
+	  
+	var menuToggle = document.querySelector('[data-js="menu-toggle"]');
+
+	// Remove this setInterval to trigger the open/close manually through the UI
+	//var interval = setInterval(function() {
+	//  menuToggle.click();
+	//}, 2000);
+
+	// Clear the interval on any click
+	document.body.addEventListener('click', function () {
+	   clearInterval(interval);
+	});
+
+	menuToggle.addEventListener('click', function () {
+	  document.body.classList.toggle('panel-open');
+	  menuToggle.classList.toggle('open');
+	});
+
+	var closePanel = document.querySelector('[data-js="hidden-panel-close"]');
+
+	closePanel.addEventListener('click', function () {
+	  document.body.classList.remove('panel-open');
+	  menuToggle.classList.remove('open');
+	});
+		handleClearFeatures = function() { 
+			map.setView([-500, 6801000]);
+		}
+		button.addEventListener('click', handleClearFeatures, false);
+        button.addEventListener('touchstart', handleClearFeatures, false);
+		
+		
+    </script> 
+	
+  </body>
+</html>
